@@ -1,0 +1,32 @@
+.simvision/
+xcelium.d/
+work/
+cov_work/
+INCA_libs/
+csrc/
+simv*
+*.daidir
+
+# logs / history / db
+*.log
+*.history
+xrun.history
+tr_db
+cds.lib
+
+# waveform / dump
+*.vcd
+*.fsdb
+*.wlf
+*.shm
+*.trn
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+#setting
+.bashrc
+.bash_profile
+.bash_logout
+
