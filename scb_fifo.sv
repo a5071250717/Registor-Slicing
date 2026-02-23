@@ -37,10 +37,14 @@ class rv_scb_fifo extends rv_scb;
       if(t_in != t_out)
         `uvm_error("SCB", $sformatf("mismatch get = %0h, exp = %0h", t_in, t_out));
       if(out_cnt == ntimes)begin
-        if(out_cnt != in_cnt)
-          `uvm_error("SCB", $sformatf("misatch in_cnt = %0h, out_cnt = %0h", in_cnt, out_cnt))
         ->sink_done;
       end
     end
   endtask
+  
+  function void report_phase(uvm_phase phase);
+    super.report_phase(phase);
+    if(in_cnt != out_cnt)
+      `uvm_error("SCB", $sformatf("misatch in_cnt = %0h, out_cnt = %0h", in_cnt, out_cnt))
+  endfunction  
 endclass

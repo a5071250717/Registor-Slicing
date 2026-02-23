@@ -34,6 +34,7 @@ class rv_drv_source extends uvm_driver#(rv_txn);
 
       vif.cb_drv.in_vld <= 1;
       vif.cb_drv.data_in <= txn.data & mask(cfg.data_w);
+      `uvm_info("DRV", $sformatf("drive data = %0h", txn.data&mask(data_w)), UVM_LOW);
       
       do @(vif.cb_drv);
       while(!vif.cb_drv.in_rdy);

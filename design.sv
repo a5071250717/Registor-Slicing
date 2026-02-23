@@ -23,6 +23,7 @@ module RV_PIPE(rv_if.dut if_);
       if_.data_out <=0;
       
     end
+    else begin
       case({push, pop})
         2'b00:begin // {push, pop} = 0,0
           {full, if_.data_out} <=	{full, if_.data_out};
@@ -91,8 +92,15 @@ interface rv_if #(parameter data_w = 48)(
   property data_hold;
     @(posedge clk) disable iff(!rstn)
     (out_vld && !out_rdy) |=> $stable(data_out);
+  endproperty   
+  DATA_HOLD:assert property(data_hold) else
+    $error("[SVA] out_data changed while out_valid && !out_ready");
+     
+  property out_valid_hold;
+    @(posedge clk) disable iff(!rstn)
+    (out_vld && !out_rdy) |=> out_vld;
   endproperty
-        DATA_HOLD:assert property(data_hold) else
-          $error("[SVA] out_data changed while out_valid && !out_ready");
+  OUT_VALID_HOLD:assert property(out_valid_hold) else
+    $error("[SVA] out valid did not hold until fetch");      
 endinterface
 

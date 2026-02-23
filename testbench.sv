@@ -22,7 +22,7 @@ module top;
   rv_cfg cfg;
   RV_PIPE rv_pipe(.if_(top_if));
   initial begin
-    
+   
     //override
     uvm_factory::get().set_type_override_by_type(rv_test::get_type(),
                                                  rv_test_fifo::get_type());
@@ -51,13 +51,7 @@ module top;
     rstn = 0;
     #100;
     rstn = 1;
-
   end
-  /*
-  initial begin
-    #0    $display("T=%0t rstn=%b intf.rstn=%b", $time, rstn, top_if.rstn);
-    #500  $display("T=%0t rstn=%b intf.rstn=%b", $time, rstn, top_if.rstn);
-  end
-  */
+  
 endmodule
 

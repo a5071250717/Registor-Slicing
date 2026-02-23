@@ -20,7 +20,7 @@ class rv_scb extends uvm_scoreboard;
     imp_in = new("imp_in", this);
     imp_out = new("imp_out", this);
     exp_in = new("exp_in", this);
-    exp_out = new("exp_out", this);
+    exp_out = new("exp_iut", this);
   endfunction
   
   function void write_in(u_64t t_in);
@@ -59,10 +59,7 @@ class rv_scb extends uvm_scoreboard;
     super.report_phase(phase);
     if(data.size()!=0)
       `uvm_error("SCB", "data queue is not empty")
-    else if(in_cnt != out_cnt)begin
+    else if(in_cnt != out_cnt)
       `uvm_error("SCB", $sformatf("misatch in_cnt = %0h, out_cnt = %0h", in_cnt, out_cnt))
-    end
-    else
-      `uvm_info("SCB", "Correct", UVM_LOW);
   endfunction
 endclass
