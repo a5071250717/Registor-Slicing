@@ -14,8 +14,8 @@ covergroup cov with function sample(bit stall,
   }
   cp_burst: coverpoint burst_len{
     bins low = {[0:1]};
-    /*bins mid = {[2:3]};
-    bins high = {[4:5]};*/
+    bins mid = {[2:3]};
+    bins high = {[4:5]};
   }
   cx_stall_burst: cross cp_stall, cp_burst;
 endgroup

@@ -11,10 +11,11 @@ module RV_PIPE(rv_if.dut if_);
   input logic out_rdy,
   output logic [data_w-1:0] data_out);*/
   
-  logic full;
+  logic full, push, pop;
   assign if_.in_rdy = !full || (full && if_.out_rdy);
   assign if_.out_vld = full;
-  
+  assign push = if_.in_rdy && if_.in_vld;
+  assign pop = if_.out_rdy && if_.out_vld;
   //push
   always@(posedge if_.clk)begin
     if(!if_.rstn)begin
@@ -22,22 +23,21 @@ module RV_PIPE(rv_if.dut if_);
       if_.data_out <=0;
       
     end
-    else begin
-      case({if_.in_vld, if_.out_rdy})
-        2'b00:
-        {full, if_.data_out} <=	{full, if_.data_out};
-        2'b01:begin
-          if(if_.out_vld)
+      case({push, pop})
+        2'b00:begin // {push, pop} = 0,0
+          {full, if_.data_out} <=	{full, if_.data_out};
+        end
+        2'b01:begin //{push, pop} = 0,1
           {full, if_.data_out} <= {1'b0, if_.data_out};
         end
-        2'b10:begin
-          if(if_.in_rdy)
+        2'b10:begin //{push, pop} = 1,0
           {full, if_.data_out} <= {1'b1, if_.data_in};
+          $display("[%0t]DUT push %0h", $time, if_.data_in);
         end
-        
-        2'b11:begin
-          if(if_.in_rdy)
-          {full, if_.data_out} <= {1'b1, if_.data_in};        
+
+        2'b11:begin //{push, pop} = 1,1
+          {full, if_.data_out} <= {1'b1, if_.data_in};      
+          $display("[%0t] DUT push %0h", $time, if_.data_in);
         end
       endcase
     end

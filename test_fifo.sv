@@ -1,5 +1,5 @@
-class rv_test extends uvm_test;
-  `uvm_component_utils(rv_test)
+class rv_test_fifo extends uvm_test;
+  `uvm_component_utils(rv_test_fifo)
   rv_env env;
   rv_seq seq;
   function new(string name, uvm_component parent);
@@ -12,10 +12,10 @@ class rv_test extends uvm_test;
     if(!seq.randomize())
       `uvm_error("TEST", "Can't randomize seq")
     env = rv_env::type_id::create("env", this);
-    /*uvm_factory::get().set_inst_override_by_type(
+    uvm_factory::get().set_inst_override_by_type(
       rv_scb::get_type(),
       rv_scb_fifo::get_type(),
-      "uvm_test_top.env.scb");*/
+      "uvm_test_top.env.scb");
   endfunction
   
   function void end_of_elaboration_phase(uvm_phase phase);

@@ -18,12 +18,14 @@ class rv_mon_out extends uvm_monitor;
   endfunction
   
   task run_phase(uvm_phase phase);
-    @(vif.rstn);
+    @(posedge vif.rstn);
     forever begin
       @(vif.cb_mon);
       // for scb
-      if(vif.cb_mon.out_rdy && vif.cb_mon.out_vld)
+      if(vif.cb_mon.out_rdy && vif.cb_mon.out_vld)begin
         ap.write(vif.cb_mon.data_out);
+        //`uvm_info("MON_OUT", $sformatf("mon out %0h", vif.cb_mon.data_out), UVM_LOW);
+      end
       // for subscriber
       s = new("s");
       s.out_vld = vif.cb_mon.out_vld;

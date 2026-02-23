@@ -1,6 +1,5 @@
 // Code your testbench here
 // or browse Examples
-//=============
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 
@@ -24,6 +23,10 @@ module top;
   RV_PIPE rv_pipe(.if_(top_if));
   initial begin
     
+    //override
+    uvm_factory::get().set_type_override_by_type(rv_test::get_type(),
+                                                 rv_test_fifo::get_type());
+
     //CFG
     cfg = rv_cfg::type_id::create("cfg");
     cfg.data_w = data_w;
@@ -49,12 +52,12 @@ module top;
     #100;
     rstn = 1;
 
-   // #300
-    //$finish();
   end
+  /*
   initial begin
     #0    $display("T=%0t rstn=%b intf.rstn=%b", $time, rstn, top_if.rstn);
     #500  $display("T=%0t rstn=%b intf.rstn=%b", $time, rstn, top_if.rstn);
   end
+  */
 endmodule
 

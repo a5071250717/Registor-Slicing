@@ -15,8 +15,10 @@ import rv_cov_pkg::*;
 `include "mon_out.sv"
 `include "sqr.sv"
 `include "scb.sv"
+`include "scb_fifo.sv"
 `include "subscriber.sv"
 `include "agt.sv"
 `include "env.sv"
 `include "test.sv"
+`include "test_fifo.sv"
 endpackage

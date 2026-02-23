@@ -25,10 +25,10 @@ class rv_subscriber extends uvm_subscriber#(rv_subscriber_txn);
     stall = t.out_vld && !t.out_rdy;
     bubble = !t.out_vld;
     burst_len = (t.out_vld && t.out_rdy)? burst_len+1: 0;
-    if(stall || bubble)
+    /*if(stall || bubble)
     	`uvm_info("SUBSCRIBER", $sformatf("stall = %b, bubble = %b", stall, bubble),UVM_LOW)
     else
-      `uvm_info("SUBSCRIBER", $sformatf("burst_len = %0d", burst_len),UVM_LOW)
+      `uvm_info("SUBSCRIBER", $sformatf("burst_len = %0d", burst_len),UVM_LOW)*/
         
     cg.sample(stall, bubble, burst_len);
   endfunction

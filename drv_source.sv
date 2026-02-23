@@ -20,12 +20,13 @@ class rv_drv_source extends uvm_driver#(rv_txn);
     rv_txn txn;
     vif.cb_drv.in_vld <= 0;
     vif.cb_drv.data_in <= 0;
-    //@(posedge vif.rstn);
-    wait(vif.rstn === 1'b1);
+    @(posedge vif.rstn);
+    //wait(vif.rstn === 1'b1);
     forever begin
       seq_item_port.get_next_item(txn);
       `uvm_info("DRV", $sformatf("get data = %0h, gap = %0d", txn.data&mask(data_w),
                                 txn.gap), UVM_LOW);
+      @(vif.cb_drv);
       repeat(txn.gap)begin
         @(vif.cb_drv);
         vif.cb_drv.in_vld <= 0;
@@ -38,7 +39,7 @@ class rv_drv_source extends uvm_driver#(rv_txn);
       while(!vif.cb_drv.in_rdy);
 
       //@(vif.cb_drv);
-      //vif.cb_drv.in_vld <= 0;
+      vif.cb_drv.in_vld <= 0;
       seq_item_port.item_done();
     end
   endtask

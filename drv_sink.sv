@@ -19,7 +19,7 @@ class rv_drv_sink extends uvm_driver;
     @(posedge vif.rstn);
     forever begin
       @(vif.cb_sink);
-      vif.cb_sink.out_rdy <= ($urandom_range(1,100) < 99);
+      vif.cb_sink.out_rdy <= ($urandom_range(1,100) < 50);
     end
   endtask
 endclass
