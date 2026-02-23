@@ -13,7 +13,7 @@ class rv_env extends uvm_env;
     
     agt = rv_agt::type_id::create("agt", this);
     scb = rv_scb::type_id::create("scb", this);
-    subscriber = rv_subscriber::type_id::create("subscriver", this);
+    subscriber = rv_subscriber::type_id::create("subscriber", this);
   endfunction
   
   function void connect_phase(uvm_phase phase);

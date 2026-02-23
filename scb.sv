@@ -20,7 +20,7 @@ class rv_scb extends uvm_scoreboard;
     imp_in = new("imp_in", this);
     imp_out = new("imp_out", this);
     exp_in = new("exp_in", this);
-    exp_out = new("exp_iut", this);
+    exp_out = new("exp_out", this);
   endfunction
   
   function void write_in(u_64t t_in);
