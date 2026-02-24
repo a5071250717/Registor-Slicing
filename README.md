@@ -3,10 +3,8 @@
 - Options used: `-access +rw -seed random -coverage functional
 
 ## Run
-- ./run_xrun.sh rv_test random
+- ./run_xrun.sh <test_name> <seed>
 - 選用 rv_test (scb 用 兩個analysis_imp 去收data_in/out, 需定義write_in/write_out)
-  - 目前在top module 會自動set_type_override 把rv_test 替換成 rv_test_fifo
-  - rv_test_fifo 會自動 set_inst_override 把scb 替換成 scb_fifo
 - 選用 rv_test_fifo (scb 用兩個uvm_tlm_analysis_fifo 去收data_in/out, 用內建write)
 
 
