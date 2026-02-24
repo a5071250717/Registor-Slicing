@@ -24,8 +24,8 @@ module top;
   initial begin
    
     //override
-    uvm_factory::get().set_type_override_by_type(rv_test::get_type(),
-                                                 rv_test_fifo::get_type());
+    /*uvm_factory::get().set_type_override_by_type(rv_test::get_type(),
+                                                 rv_test_fifo::get_type());*/
 
     //CFG
     cfg = rv_cfg::type_id::create("cfg");
@@ -42,7 +42,7 @@ module top;
   initial begin
     $dumpvars(0);
     $dumpfile("dump.vcd");
-    run_test("rv_test");
+    run_test();
 
   end
   
