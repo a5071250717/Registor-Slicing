@@ -1,85 +1,73 @@
 ## Simulator
 - Cadence Xcelium 25.03
-- Options used: `-access +rw -seed random -coverage functional`
+- Options used: `-access +rw -seed random -coverage functional
 
 ## Run
-```bash
-cd sim
-make TEST=rv_test SEED=random COV=1
-# or
-./run_xrun.sh rv_test random
+- ./run_xrun.sh rv_test random
+- 選用 rv_test (scb 用 兩個analysis_imp 去收data_in/out, 需定義write_in/write_out)
+  - 目前在top module 會自動set_type_override 把rv_test 替換成 rv_test_fifo
+  - rv_test_fifo 會自動 set_inst_override 把scb 替換成 scb_fifo
+- 選用 rv_test_fifo (scb 用兩個uvm_tlm_analysis_fifo 去收data_in/out, 用內建write)
 
 
-
-
-### UVM 環境架構圖
+## UVM 環境架構圖
 
 ```mermaid
-graph TD
-    %% 定義階層
-    subgraph uvm_test_top
-        subgraph rv_env[env]
-          subgraph agt
-              rv_drv_source[drv_source]
-              rv_drv_sink[drv_sink]
-              rv_mon_in[mon_in]
-              rv_mon_out[mon_out]
-              rv_sqr[sqr]
-          end
-          rv_subscriber[subscriber]
-          rv_scb[scb]
-        end
+flowchart TD
+  subgraph uvm_test_top["uvm_test_top (test)"]
+    subgraph rv_env["rv_env (env)"]
+      subgraph rv_agt["rv_agt (agt)"]
+        rv_sqr["rv_sqr (sqr)"]
+        rv_drv_source["rv_drv_source (drv_source)"]
+        rv_drv_sink["rv_drv_sink (drv_sink)"]
+        rv_mon_in["rv_mon_in (mon_in)"]
+        rv_mon_out["rv_mon_out (mon_out)"]
+      end
+      rv_subscriber["rv_subscriber (subscriber)"]
+      rv_scb["rv_scb (scb)"]
     end
-
-
-    %% 定義連線
-    drv_source <--> sqr
-    mon_in -- "uvm_analysis_port"--> scb
-    mon_out -- "seq_item_port"--> scb
+  end
 ```
+## 訊號
 ```mermaid
-graph LR
-    %% 定義顏色風格
-    classDef txn fill:#f1c40f,stroke:#333,stroke-dasharray: 5 5;
-    classDef comp fill:#ecf0f1,stroke:#2c3e50,stroke-width:2px;
+flowchart LR
+  %% Sequencer -> Drivers
+  rv_sqr["sqr"] -->|txn| rv_drv_source["drv_source"]
 
-    %% 1. Sequence 與 Agent 區塊
-    subgraph SEQUENCE [uvm_test_top]
-        seq[seq]
-    end
+  %% Drivers -> IF 
+  rv_drv_source["drv_source"] -->|in_vld data_in| rv_if.drv["if_.drv"]
+  rv_drv_sink   -->|out_rdy| rv_if.drv["if_.drv"]
 
-    subgraph AGT [agt]
-        sqr[sqr]
-        drv[drv_source]
-    end
+  %% DUT block
+  rv_if.drv --> RV_PIPE["rv_pipe"]
+  RV_PIPE["rv_pipe"] --> rv_if.mon
 
-    subgraph DUT[dut]
-    end
+  %% IF to mon
+  rv_if.mon["if_.mon"]  --> |in_rdy in_vld data_in|rv_mon_in["mon_in"]
+  rv_if.mon["if_.mon"]  --> |out_rdy out_vld data_out|rv_mon_out["mon_out"]
 
-    %% 2. Subscriber 與 Coverage 區塊
-    subgraph ENV [env]
-        sub[subscriber]
-        cov((Covergroup))
-    end
+  %% MON to SCB
+  rv_mon_in  -->|data_in| rv_scb["scb"]
+  rv_mon_out -->|data_out| rv_scb["scb"]
+  %% MON to SUBSCRIBER
+  rv_mon_out  -->|out_rdy out_vld data_out| rv_subscriber["subscriber"]
 
-    %% 3. 資料流連線 (Data Flow)
-    
-    %% Sequence 產生 txn 丟給 sqr
-    seq -- "1. 產生 rv_txn" --> sqr
-    
-    %% sqr 傳遞給 drv
-    sqr -- "2. seq_item_port (rv_txn)" --> drv
-    drv -- "3. VIF " --> DUT 
-    %% Monitor (隱含) 或其他組件傳給 subscriber
-    %% 假設你是從某處傳進 subscriber_txn
-    rv_mon[mon_out] -- "4. analysis_port (subscriber_txn)" --> sub
-    
-    %% Subscriber 餵進 Covergroup
-    sub -- "sample()" --> cov
+```
+## port connection(when xrun test.sv)
+```mermaid
+flowchart LR
+rv_sqr["sqr"] --> |seq_item_port|rv_drv_source["drv_source"]
+rv_mon_in["mon_in"] -->|uvm_analysis_port|rv_scb["scb"]
+rv_mon_out["mon_out"] -->|uvm_analysis_port|rv_scb["scb"]
+rv_mon_out["mon_out"] -->|uvm_analysis_port|rv_subscriber["subscriber"]
+```
+## port connection (when xrun rv_test_fifo)
 
-  
-    %% 套用風格
-    class seq,sqr,drv,sub comp;
-    %% 如果想把 txn 特別標註出來，可以用註記方式
+```mermaid
+flowchart LR
+rv_sqr["sqr"] --> |seq_item_port|rv_drv_source["drv_source"]
+rv_mon_in["mon_in"] -->|uvm_tlm_analysis_fifo|rv_scb["scb"]
+rv_mon_out["mon_out"] -->|uvm_tlm_analysis_fifo|rv_scb["scb"]
+rv_mon_out["mon_out"] -->|uvm_analysis_port|rv_subscriber["subscriber"]
 ```
 
